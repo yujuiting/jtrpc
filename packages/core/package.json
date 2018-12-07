@@ -1,0 +1,9 @@
+{
+  "name": "@jtrpc/core",
+  "version": "0.0.0",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc"
+  }
+}

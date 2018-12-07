@@ -1,0 +1,17 @@
+{
+  "name": "jtrpc",
+  "version": "0.0.0",
+  "description": "json rpc server",
+  "license": "MIT",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "devDependencies": {
+    "jest": "^23.6.0",
+    "koa": "^2.6.2",
+    "koa-bodyparser": "^4.2.1",
+    "typedi": "^0.8.0",
+    "typescript": "^3.2.2"
+  }
+}
