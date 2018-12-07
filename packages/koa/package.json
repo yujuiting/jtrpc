@@ -2,7 +2,13 @@
   "name": "@jtrpc/koa",
   "version": "0.0.0",
   "license": "MIT",
+  "description": "The adaptor of koa",
+  "author": "yujuiting <yujuiting@me.com>",
   "main": "dist/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yujuiting/jtrpc.git"
+  },
   "scripts": {
     "build": "tsc"
   },
