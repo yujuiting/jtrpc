@@ -1,21 +1,26 @@
 import { Middleware } from 'koa';
-import { ContainerInstance, Container } from 'typedi';
+import { ContainerInstance, Container, ObjectType, Token } from 'typedi';
 import { checkRequestMessage,
          respondSuccess,
          respondFail,
          Response,
          MethodInstance } from '@jtrpc/core';
 
+export type MethodResolver = (method: string) => ObjectType<any> | Token<any> | string | { service: any;} | undefined;
+
 export interface Config {
-  container?: typeof Container | ContainerInstance,
+  container?: typeof Container | ContainerInstance;
+  methodResolver?: MethodResolver;
 }
 
 /**
  * @todo check body parser exsited
  */
-export default function jtrpc({
+export function createMiddleware({
   container = Container,
+  methodResolver = (method => method),
 }: Config = {}): Middleware {
+
   return async (ctx, next) => {
     if (ctx.request.method.toLocaleLowerCase() !== 'post') {
       return next();
@@ -28,15 +33,12 @@ export default function jtrpc({
       return next();
     }
 
-    const method: MethodInstance<any, any> = container.get(request.method);
+    const identity = methodResolver(request.method) || request.method;
 
-    if (!method) {
+    const method = container.get(<any> identity);
+
+    if (!method || !(method instanceof MethodInstance)) {
       ctx.body = respondFail(request.id, Response.ErrorCode.MethodNotFound, 'method not found', request.method);
-      return next();
-    }
-
-    if (!method.validateParameters(request.params)) {
-      ctx.body = respondFail(request.id, Response.ErrorCode.InvalidParams, 'invalid params', request.params);
       return next();
     }
 
@@ -48,10 +50,14 @@ export default function jtrpc({
       args = [request.params];
     }
 
+    if (!method.validateParameters(...args)) {
+      ctx.body = respondFail(request.id, Response.ErrorCode.InvalidParams, 'invalid params', request.params);
+      return next();
+    }
+
     try {
       const result = await method.execute(...args);    
       ctx.body = respondSuccess(request.id, result);
-      return next();
     } catch (error) {
       ctx.body = respondFail(
         request.id,
@@ -59,7 +65,10 @@ export default function jtrpc({
         error.message || 'internal error',
         error
       );
-      return next();
     }
+
+    return next();
   };
 }
+
+export default createMiddleware;
