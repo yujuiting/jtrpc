@@ -35,7 +35,7 @@ export function checkRequestMessage(request: unknown): request is Request {
 
   if (typeof (<Request> request).id !== 'string' &&
       typeof (<Request> request).id !== 'number' &&
-      typeof (<Request> request).id !== null) {
+      (<Request> request).id !== null) {
     return false;
   }
 
