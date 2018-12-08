@@ -1,10 +1,18 @@
 {
   "name": "@jtrpc/koa",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "license": "MIT",
   "description": "The adaptor of koa",
   "author": "yujuiting <yujuiting@me.com>",
   "main": "dist/index.js",
+  "keywords": [
+    "jsonrpc",
+    "koa"
+  ],
+  "bugs": {
+    "url": "https://github.com/yujuiting/jtrpc/issues",
+    "email": "yujuiting@me.com"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/yujuiting/jtrpc.git"
