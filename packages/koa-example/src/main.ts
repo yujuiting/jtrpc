@@ -8,7 +8,15 @@ const app = new Koa();
 
 app.use(bodyparser());
 
-app.use(jtrpc());
+app.use(jtrpc({
+  methodResolver: method => {
+    switch (method) {
+      case 'math.sum': return Sum;
+    }
+  },
+}));
+
+app.listen(3000, () => console.log('server up'));
 
 @Service('ping')
 class Ping extends MethodInstance {
@@ -21,4 +29,13 @@ class Ping extends MethodInstance {
   }
 }
 
-app.listen(3000, () => console.log('server up'));
+@Service()
+class Sum extends MethodInstance<number[], number> {
+  execute(...values: number[]) {
+    return values.reduce((acc, curr) => acc + curr, 0);
+  }
+
+  validateParameters(...values: unknown[]) {
+    return values.every(value => typeof value === 'number');
+  }
+}
